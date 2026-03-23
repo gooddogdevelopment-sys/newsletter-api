@@ -7,4 +7,5 @@ public class NewsLetterDto
     public required DateTime SendDate { get; set; }
     public required string Overview { get; set; }
     public required string Subject { get; set; }
+    public string? CodeSnippet { get; set; }
 }
