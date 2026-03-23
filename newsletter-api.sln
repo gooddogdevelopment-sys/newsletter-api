@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnet-core-api-w-postgres", "dotnet-core-api-w-postgres\dotnet-core-api-w-postgres.csproj", "{BD064EC9-F543-4F0E-9FAC-B9A3AC920816}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "newsletter-api", "newsletter-api\newsletter-api.csproj", "{BD064EC9-F543-4F0E-9FAC-B9A3AC920816}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EEF3461B-964C-4D3D-A7F8-64A6D5DFDB66}"
 	ProjectSection(SolutionItems) = preProject
