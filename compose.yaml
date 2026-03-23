@@ -1,0 +1,49 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: dotnet_api_db
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - dotnet_network
+
+  dotnet-core-api-w-postgres:
+    image: dotnet-core-api-w-postgres
+    container_name: dotnet_api
+    build:
+      context: .
+      dockerfile: dotnet-core-api-w-postgres/Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=dotnet_api_db;Username=postgres;Password=postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - dotnet_network
+
+volumes:
+  postgres_data:
+
+networks:
+  dotnet_network:
+    driver: bridge
