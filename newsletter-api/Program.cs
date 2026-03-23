@@ -1,6 +1,7 @@
 using dotnet_core_api_w_postgres.Data;
 using dotnet_core_api_w_postgres.Middleware;
 using dotnet_core_api_w_postgres.Services;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Serilog;
@@ -42,10 +43,31 @@ builder.Services.AddSwaggerGen(c =>
 });
 builder.Services.AddOpenApi();
 
+//Services
 builder.Services.AddScoped<INewsLetterService, NewsLetterService>();
+
+
+builder.Services.AddRateLimiter(options => {
+    options.AddFixedWindowLimiter("strict", opt => {
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.PermitLimit = 100;
+    });
+});
+
+var allowedOrigin = builder.Configuration.GetValue<string>("AllowedOrigin") 
+                    ?? "http://localhost:3000";
+
+builder.Services.AddCors(options => {
+    options.AddPolicy("VercelPolicy", policy => {
+        policy.WithOrigins(allowedOrigin)
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
+app.UseCors("VercelPolicy");
 // Show swagger docs in all environments. Uncomment below if you want to limit to development
 app.MapOpenApi();
 app.UseSwagger();
