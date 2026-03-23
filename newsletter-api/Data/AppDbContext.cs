@@ -5,8 +5,7 @@ namespace dotnet_core_api_w_postgres.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
-    // Add DbSets here:
-    // public DbSet<MyEntity> MyEntities => Set<MyEntity>();
+    public DbSet<Newsletter> NewsLetters { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -14,28 +13,5 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
         // Apply all IEntityTypeConfiguration<T> classes in this assembly
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
-    }
-    
-    public override Task<int> SaveChangesAsync(CancellationToken ct = default)
-    {
-        var now = DateTime.UtcNow;
-
-        foreach (var entry in ChangeTracker.Entries<BaseEntity>())
-        {
-            switch (entry.State)
-            {
-                case EntityState.Added:
-                    entry.Entity.CreatedAt = now;
-                    entry.Entity.UpdatedAt = now;
-                    break;
-                case EntityState.Modified:
-                    entry.Entity.UpdatedAt = now;
-                    // Prevent CreatedAt from being overwritten
-                    entry.Property(e => e.CreatedAt).IsModified = false;
-                    break;
-            }
-        }
-
-        return base.SaveChangesAsync(ct);
     }
 }

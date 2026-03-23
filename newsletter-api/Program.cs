@@ -1,5 +1,6 @@
 using dotnet_core_api_w_postgres.Data;
 using dotnet_core_api_w_postgres.Middleware;
+using dotnet_core_api_w_postgres.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Serilog;
@@ -15,7 +16,7 @@ builder.Host.UseSerilog();
 
 // Database
 builder.Services.AddDbContext<AppDbContext>(opts =>
-    opts.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
+    opts.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Exception handling (RFC 9457 Problem Details)
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -26,16 +27,22 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "API Template", Version = "v1" });
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    c.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
     {
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
+        Description = "API Key needed to access the endpoints. X-ApiKey: Your_Key",
         In = ParameterLocation.Header,
-        Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\""
+        Name = "X-ApiKey",
+        Type = SecuritySchemeType.ApiKey
+    });
+
+    c.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference("ApiKey", document)] = []
     });
 });
 builder.Services.AddOpenApi();
 
+builder.Services.AddScoped<INewsLetterService, NewsLetterService>();
 
 var app = builder.Build();
 
@@ -53,6 +60,8 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
 app.UseSerilogRequestLogging(); //Optional. Logs all Http requests
+
+app.UseMiddleware<ApiKeyMiddleware>();
 
 app.UseAuthorization();
 
