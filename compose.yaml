@@ -18,12 +18,12 @@ services:
     networks:
       - dotnet_network
 
-  dotnet-core-api-w-postgres:
-    image: dotnet-core-api-w-postgres
+  newsletter-api:
+    image: newsletter-api
     container_name: dotnet_api
     build:
       context: .
-      dockerfile: dotnet-core-api-w-postgres/Dockerfile
+      dockerfile: newsletter-api/Dockerfile
     ports:
       - "8080:8080"
       - "8081:8081"
