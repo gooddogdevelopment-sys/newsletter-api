@@ -7,6 +7,7 @@ namespace dotnet_core_api_w_postgres.Services;
 public interface IAnalyticsService
 {
    Task<NewsletterAnalyticsDto> GetAnalytics();
+   Task<List<NewsletterTotalsByMonthDto>> GetNewsLetterTotalsByMonth();
 }
 
 public class AnalyticsService (AppDbContext context) : IAnalyticsService
@@ -42,5 +43,19 @@ public class AnalyticsService (AppDbContext context) : IAnalyticsService
     {
         var count = await context.NewsLetters.CountAsync();
         return count;
+    }
+
+    public async Task<List<NewsletterTotalsByMonthDto>> GetNewsLetterTotalsByMonth()
+    {
+        var result = await context.NewsLetters
+            .GroupBy(n => new { n.SendDate.Year, n.SendDate.Month })
+            .Select(g => new NewsletterTotalsByMonthDto
+            {
+                Month = g.Key.Year + "-" + g.Key.Month,
+                Count = g.Count()
+            })
+            .OrderBy(x => x.Month)
+            .ToListAsync();
+        return result;
     }
 }

@@ -14,4 +14,11 @@ public class AnalyticsController (IAnalyticsService service) : ControllerBase
         var result = await service.GetAnalytics();
         return Ok(result);
     }
+    
+    [HttpGet("newsletter-counts-by-month")]
+    public async Task<ActionResult<List<NewsletterTotalsByMonthDto>>> GetNewsLetterTotalsByMonth()
+    {
+        var result = await service.GetNewsLetterTotalsByMonth();
+        return Ok(result);
+    }
 }
