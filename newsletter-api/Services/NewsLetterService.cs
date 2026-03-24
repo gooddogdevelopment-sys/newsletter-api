@@ -20,9 +20,9 @@ public class NewsLetterService (AppDbContext context) : INewsLetterService
             Id = x.Id,
             Title = x.Title,
             SendDate = x.SendDate,
-            Overview = x.Overview.Substring(0, 50),
+            Overview = x.Overview.Substring(0, 150),
             Subject = x.Subject
-        }).ToListAsync();
+        }).OrderByDescending(x=>x.SendDate).ToListAsync();
     }
 
     public async Task<NewsLetterDto> GetNewsLetterByIdAsync(int id)
