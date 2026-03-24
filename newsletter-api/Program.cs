@@ -45,7 +45,7 @@ builder.Services.AddOpenApi();
 
 //Services
 builder.Services.AddScoped<INewsLetterService, NewsLetterService>();
-
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 
 builder.Services.AddRateLimiter(options => {
     options.AddFixedWindowLimiter("strict", opt => {
