@@ -1,6 +1,6 @@
 ﻿namespace dotnet_core_api_w_postgres.Middleware;
 
-public class ApiKeyMiddleware(RequestDelegate next)
+public class ApiKeyMiddleware(RequestDelegate next, ILogger<ApiKeyMiddleware> logger)
 {
     private const string _apikeyname = "X-ApiKey";
 
@@ -10,6 +10,8 @@ public class ApiKeyMiddleware(RequestDelegate next)
         {
             context.Response.StatusCode = 401;
             await context.Response.WriteAsync("API Key missing.");
+
+            logger.LogError("API Key missing in request.");
             return;
         }
 
@@ -20,6 +22,8 @@ public class ApiKeyMiddleware(RequestDelegate next)
         {
             context.Response.StatusCode = 401;
             await context.Response.WriteAsync("Unauthorized client.");
+
+            logger.LogError("API Key is not configured.");
             return;
         }
 
@@ -27,6 +31,8 @@ public class ApiKeyMiddleware(RequestDelegate next)
         {
             context.Response.StatusCode = 401;
             await context.Response.WriteAsync("Unauthorized client.");
+
+            logger.LogError("API Key does not match. {extractApiKey}", extractedApiKey.ToString());
             return;
         }
 
