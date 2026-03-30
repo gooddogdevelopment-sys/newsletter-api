@@ -1,5 +1,4 @@
 ﻿using dotnet_core_api_w_postgres.Data;
-using dotnet_core_api_w_postgres.Models;
 using dotnet_core_api_w_postgres.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 
