@@ -32,7 +32,7 @@ public class ApiKeyMiddleware(RequestDelegate next, ILogger<ApiKeyMiddleware> lo
             context.Response.StatusCode = 401;
             await context.Response.WriteAsync("Unauthorized client.");
 
-            logger.LogError("API Key does not match. {extractApiKey}", extractedApiKey.ToString());
+            logger.LogError("API Key does not match. {extractApiKey}", extractedApiKey.ToString().TakeLast(5));
             return;
         }
 
